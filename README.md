@@ -1,57 +1,67 @@
-# Smart Agriculture System 🌱
+# Smart Agriculture Monitoring and Irrigation System 🌱
 
-An ESP32-based smart agriculture system for monitoring soil moisture and supporting efficient irrigation.
+## Soil Moisture Sensor Investigation
 
-## Overview
+This is the first phase of the Smart Agriculture Monitoring and Irrigation System.
 
-This project uses an ESP32 microcontroller and soil moisture sensors to measure soil conditions. The system is designed to help farmers monitor soil moisture levels and improve water management.
+The objective is to understand sensor behaviour, collect measurements, perform calibration, and prepare the sensor for future IoT integration.
 
-## Features
-
-- Soil moisture monitoring using ESP32
-- Sensor calibration for accurate readings
-- Real-time data collection
-- Low-cost IoT-based agriculture solution
-- Expandable for cloud monitoring and automatic irrigation
-
-## Hardware Components
+## Hardware
 
 - ESP32 Development Board
 - Soil Moisture Sensor
-- Jumper Wires
 - Breadboard
+- Jumper Wires
 - USB Cable
 
-## Software Tools
 
-- PlatformIO
+## Sensor Working Principle
+
+The soil moisture sensor measures changes in electrical conductivity caused by water content in soil.
+
+The sensor output is converted into an ADC value by the ESP32.
+
+
+## Calibration Experiment
+
+The sensor was tested under different soil conditions.
+
+| Condition | ADC Value Range |
+|---|---|
+| Dry soil | 0-200 |
+| Moist soil | 200-1000 |
+| Wet soil | Above 1000 |
+
+
+## Observations
+
+- ADC values increased when soil moisture increased.
+- Multiple readings were averaged to reduce sensor noise.
+- Calibration values were obtained experimentally.
+
+
+## Software
+
 - Visual Studio Code
+- PlatformIO
 - Arduino Framework
-- C/C++ Programming
+- C++
 
-## Project Structure
 
-```
-smart-agriculture-system
-│
-├── src
-│   └── main.cpp
-│
-├── platformio.ini
-│
-└── README.md
-```
+## Current Status
 
-## Future Improvements
+Completed:
+- Sensor connection
+- Data collection
+- Calibration
+- ESP32 implementation
 
-- Add temperature and humidity sensors
-- Connect to IoT cloud platforms
-- Create mobile monitoring application
-- Implement automatic water pump control
-- Use Machine Learning for irrigation prediction
 
-## Author
+## Future Work
 
-Tharangi Madushani  
-Computer Science Student  
-Kristianstad University, Sweden
+- Add temperature and humidity monitoring
+- Add water level monitoring
+- Control irrigation pump automatically
+- Send data through WiFi
+- Store data in database
+- Apply machine learning for irrigation prediction
