@@ -14,6 +14,18 @@ The objective is to understand sensor behaviour, collect measurements, perform c
 - Jumper Wires
 - USB Cable
 
+## Hardware Setup
+
+![Soil Moisture Sensor Setup](images/soil_sensor_setup.jpeg)
+
+## Wiring Diagram
+
+![Soil Moisture Sensor wiring](images/soil_sensor_wiring_diagram.jpeg)
+
+## Serial Monitor Output
+
+![Serial Output](images/soil_sensor_serial_output.png)
+
 
 ## Sensor Working Principle
 
