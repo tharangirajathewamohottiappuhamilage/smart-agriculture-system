@@ -19,7 +19,7 @@ int readSoilMoistureAverage(uint8_t samples = 10)
         delay(10);
     }
 
-    return total / samples;
+    return total / samples; 
 }
 
 
