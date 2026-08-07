@@ -1,76 +1,35 @@
 #include <Arduino.h>
+#include <DHT.h>
 
+#define DHT_PIN 17
+#define DHT_TYPE DHT11
 
-constexpr uint8_t SOIL_SENSOR_PIN = 32;
-
-
-// Calibration values from your experiment
-constexpr int DRY_THRESHOLD = 200;
-constexpr int MOIST_THRESHOLD = 1000;
-
-
-int readSoilMoistureAverage(uint8_t samples = 10)
-{
-    long total = 0;
-
-    for(uint8_t i = 0; i < samples; i++)
-    {
-        total += analogRead(SOIL_SENSOR_PIN);
-        delay(10);
-    }
-
-    return total / samples; 
-}
-
-
-String getSoilCondition(int value)
-{
-
-    if(value < DRY_THRESHOLD)
-    {
-        return "DRY";
-    }
-    else if(value < MOIST_THRESHOLD)
-    {
-        return "MOIST";
-    }
-    else
-    {
-        return "WET";
-    }
-
-}
-
+DHT dht(DHT_PIN, DHT_TYPE);
 
 void setup()
 {
-
     Serial.begin(115200);
 
-    delay(1000);
+    dht.begin();
 
-    Serial.println("==============================");
-    Serial.println("Smart Agriculture System");
-    Serial.println("Soil Moisture Monitoring");
-    Serial.println("==============================");
-
+    Serial.println("Temperature_C,Humidity_RH");
 }
-
 
 void loop()
 {
+    float humidity = dht.readHumidity();
+    float temperature = dht.readTemperature();
 
-    int moistureValue = readSoilMoistureAverage();
+    if (isnan(humidity) || isnan(temperature))
+    {
+        Serial.println("ERROR,ERROR");
+        delay(2000);
+        return;
+    }
 
+    Serial.print(temperature, 2);
+    Serial.print(",");
+    Serial.println(humidity, 2);
 
-    Serial.print("ADC Value: ");
-    Serial.println(moistureValue);
-
-
-    Serial.print("Condition: ");
-    Serial.println(getSoilCondition(moistureValue));
-
-
-    delay(1000);
-
+    delay(2000);
 }
