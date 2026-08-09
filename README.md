@@ -94,21 +94,21 @@ The sensor was tested independently using an ESP32 before integrating it with th
 * **Temperature unit:** °C
 * **Humidity unit:** %RH
 * **Communication:** Digital
-* **DHT11 DATA pin:** GPIO 4
+* **DHT11 DATA pin:** GPIO 17
 
 ### DHT11 Wiring
 
 The DHT11 was connected to the ESP32 as follows:
 
-| DHT11 Pin | ESP32  |
-| --------- | ------ |
-| VCC       | 3.3V   |
-| DATA      | GPIO 4 |
-| GND       | GND    |
+| DHT11 Pin | ESP32   |
+| --------- | ------  |
+| VCC       | 3.3V    |
+| DATA      | GPIO 17 |
+| GND       | GND     |
 
-![DHT11 Setup](Images/dht11_setup.jpeg)
+![DHT11 Setup](images/dht11_setup.jpeg)
 
-![DHT11 Wiring](Images/dht11_wiring_diagram.jpeg)
+![DHT11 Wiring](images/dht11_wiring_diagram.jpeg)
 
 ### Software
 
@@ -143,7 +143,7 @@ Temperature_C,Humidity_RH
 
 The DHT11 measurements were observed through the PlatformIO Serial Monitor.
 
-![DHT11 Serial Output](Images/dht11_serial_output.png)
+![DHT11 Serial Output](images/dht11_serial_output.png)
 
 ---
 
@@ -199,63 +199,85 @@ The second experiment investigated how the DHT11 responds to a temporary environ
 
 The experiment was divided into three phases:
 
-| Phase              |     Time | Condition                                |
-| ------------------ | -------: | ---------------------------------------- |
-| Phase 1 — Normal   |  0–3 min | Sensor left undisturbed                  |
-| Phase 2 — Response |  3–5 min | Hand placed near the sensor              |
-| Phase 3 — Recovery | 5–10 min | Hand removed and sensor left undisturbed |
+| Phase                      |     Time | Condition                                |
+| -------------------------- | -------: | ---------------------------------------- |
+| Phase 1 — Normal           |  0–3 min | Sensor left undisturbed                  |
+| Phase 2 — Hand near sensor |  3–5 min | Hand placed near the sensor              |
+| Phase 3 — Recovery         | 5–10 min | Hand removed and sensor left undisturbed |
 
-The sampling interval was approximately **2 seconds**.
+The sampling interval was approximately **2 seconds**. A total of **299 measurements** were collected over approximately **9 minutes 56 seconds**.
 
 The complete dataset is stored in:
 
 `data/dht11/experiment2_response_recovery.csv`
 
-#### Observations
+#### Statistical Results
 
-During the initial normal phase, the temperature was approximately in the **25.8–26.4 °C** range and relative humidity remained around **52–53 %RH**.
+| Phase       | Temperature | Temperature | Temperature | Humidity | Humidity  | Humidity     |
+|             | Min (°C)    | Max (°C)    | Average (°C)| Min(%RH) | Max (%RH) | Average (%RH)|
+          
+| ------------| ----------: | ----------: | ----------: | -------: | --------: | -----------: |
+| Normal      |        25.8 |      26.4   |      26.277 |     52.4 |      53.4 |       52.694 |
+| Hand near   |        26.4 |        27.1 |      26.787 |     52.4 |    65.7   |       61.953 |
+| sensor      |             |             |             |          |           |              |
+| Recovery    |        26.6 |        27.1 |     26.852  |     53.1 |    61.4   |       54.100 |
 
-When a hand was placed near the sensor, the measurements changed noticeably. Temperature increased to approximately **27.1 °C**, while relative humidity increased to approximately **65–66 %RH**.
+#### Temperature Response
 
-After the hand was removed, both measurements gradually moved back toward the initial room conditions. Near the end of the recovery phase, the temperature was approximately **26.7 °C** and relative humidity was approximately **53 %RH**.
+During the normal phase, the average temperature was approximately **26.277 °C**. When the hand was placed near the sensor, the temperature increased and reached a maximum of **27.1 °C**.
+
+The maximum temperature increase relative to the normal-phase average was approximately:
+
+**27.1 − 26.277 = 0.823 °C**
+
+During the recovery phase, the temperature gradually moved toward the initial room condition, reaching approximately **26.7 °C** at the end of the experiment.
+
+![DHT11 Temperature Response and Recovery](images/dht11_experiment2_temperature.png)
+
+#### Humidity Response
+
+The normal-phase average relative humidity was approximately **52.694 %RH**.
+
+When the hand was placed near the sensor, humidity increased substantially and reached a maximum of **65.7 %RH**.
+
+The maximum increase relative to the normal-phase average was approximately:
+
+**65.7 − 52.694 = 13.006 percentage points**
+
+After the hand was removed, the humidity gradually decreased toward the original environmental condition. The final measurement was approximately **53.4 %RH**.
+
+![DHT11 Humidity Response and Recovery](images/dht11_experiment2_humidity.png)
 
 #### Engineering Interpretation
 
-The experiment demonstrated that the DHT11 responds measurably to a temporary environmental change. The humidity response was particularly noticeable, increasing from approximately 52–53 %RH to approximately 65–66 %RH during the hand-exposure phase.
+The experiment demonstrated that the DHT11 responds measurably to a temporary environmental disturbance.
 
-After the environmental disturbance was removed, both temperature and humidity gradually moved toward their previous values. This demonstrates the sensor's response and recovery behavior.
+The temperature increased by approximately **0.823 °C** relative to the normal-phase average, while relative humidity increased by approximately **13.006 percentage points**. The humidity response was considerably more pronounced than the temperature response.
 
-The experiment does not establish the absolute measurement accuracy of the DHT11 because the measurements were not compared against a calibrated reference instrument.
+After the hand was removed, both measurements gradually moved toward the original environmental conditions. This demonstrates the sensor's environmental response and recovery behavior.
 
----
+The results indicate that the DHT11 can detect short-term changes in temperature and relative humidity and therefore has potential for environmental monitoring in the Smart Agriculture system.
 
-## DHT11 Data
+However, these experiments demonstrate **sensor response and short-term behavior, not absolute measurement accuracy**. Accuracy would require comparison against a calibrated reference instrument.
 
-The experimental datasets are stored in the following directory:
+#### Data Analysis Files
+
+The processed data and statistical results are available in:
 
 ```text
-data/
-└── dht11/
-    ├── experiment1_stable.csv
-    └── experiment2_response_recovery.csv
+data/dht11/
+├── experiment1_stable.csv
+└── experiment2_response_recovery.csv
 ```
 
-The datasets will be used for further statistical analysis and visualization.
+The analysis produced:
 
-### Planned Data Analysis
+* Temperature vs. Time graph
+* Humidity vs. Time graph
+* Phase-by-phase minimum, maximum, average, and range
+* Response magnitude relative to the normal baseline
+* Recovery observations
 
-The collected data will be analyzed using:
-
-* Minimum value
-* Maximum value
-* Average value
-* Range
-* Temperature variation
-* Humidity variation
-* Response to environmental disturbance
-* Recovery behavior
-
-Graphs of **Temperature vs. Time** and **Humidity vs. Time** will also be generated to visualize the sensor response.
 
 ### DHT11 Characterization Status
 
@@ -267,6 +289,6 @@ Graphs of **Temperature vs. Time** and **Humidity vs. Time** will also be genera
 * [x] Store measurements as CSV
 * [x] Document hardware setup
 * [x] Document wiring
-* [ ] Complete statistical analysis
-* [ ] Generate response graphs
+* [x] Complete statistical analysis
+* [x] Generate response graphs
 * [ ] Test sensor in a different location
