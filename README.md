@@ -215,7 +215,6 @@ The complete dataset is stored in:
 
 | Phase       | Temperature | Temperature | Temperature | Humidity | Humidity  | Humidity     |
 |             | Min (°C)    | Max (°C)    | Average (°C)| Min(%RH) | Max (%RH) | Average (%RH)|
-          
 | ------------| ----------: | ----------: | ----------: | -------: | --------: | -----------: |
 | Normal      |        25.8 |      26.4   |      26.277 |     52.4 |      53.4 |       52.694 |
 | Hand near   |        26.4 |        27.1 |      26.787 |     52.4 |    65.7   |       61.953 |
