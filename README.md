@@ -278,16 +278,116 @@ The analysis produced:
 * Recovery observations
 
 
-### DHT11 Characterization Status
+### Experiment 3 — Environmental Variation at Different Locations
+
+#### Objective
+
+The third experiment investigated how the DHT11 temperature and humidity sensor responds to different environmental conditions by testing the sensor at two different locations.
+
+The purpose was to determine whether the sensor measurements change when the surrounding environmental conditions change and to observe the stability of the measurements at each location.
+
+#### Experimental Procedure
+
+The experiment was performed in two locations:
+
+| Phase      |     Time | Location   | Condition                                 |
+| ---------- | -------: | ---------- | ----------------------------------------- |
+| Location A |  0–5 min | Location A | Sensor placed at the first test location  |
+| Location B | 5–20 min | Location B | Sensor moved to a different room/location |
+
+The sensor was connected to the ESP32 and measurements were collected continuously.
+
+The sampling interval was approximately **2 seconds**.
+
+A total of **602 measurements** were collected:
+
+* **Location A:** 150 measurements
+* **Location B:** 452 measurements
+
+The complete dataset is stored in:
+
+`data/dht11/experiment3_different_location.csv`
+
+#### Results
+
+The measurements showed clear differences between the two locations.
+
+At **Location A**, the temperature remained approximately between **25.1 °C and 25.3 °C**, while relative humidity was approximately between **47.4 %RH and 48.0 %RH**.
+
+After the sensor was moved to **Location B**, the temperature decreased gradually. The measurements reached approximately **24.1 °C**, showing that Location B was cooler than Location A.
+
+The humidity at Location B remained relatively stable, generally around **47.9–48.2 %RH**.
+
+#### Statistical Analysis
+
+The main statistics considered in this experiment were the minimum, maximum, average, and range of the temperature and humidity measurements.
+
+| Location   | Measurement      | Minimum | Maximum | Range | Average |
+| ---------- | ---------------- | ------: | ------: | ----: | ------: |
+| Location A | Temperature (°C) |   25.10 |   25.30 |  0.20 |  ≈25.20 |
+| Location A | Humidity (%RH)   |   47.40 |   48.00 |  0.60 |  ≈47.75 |
+| Location B | Temperature (°C) |   24.10 |   24.80 |  0.70 |  ≈24.30 |
+| Location B | Humidity (%RH)   |   47.70 |   48.20 |  0.50 |  ≈47.98 |
+
+> **Note:** The averages are calculated from the collected measurements and may be displayed rounded to two decimal places.
+
+#### Observations
+
+At Location A, the temperature remained relatively stable during the first five minutes, with only a small variation between approximately 25.1 °C and 25.3 °C.
+
+When the sensor was moved to Location B, the temperature decreased noticeably. The temperature gradually changed from approximately 24.7–24.8 °C to approximately 24.1 °C.
+
+The humidity showed much less variation compared with the temperature. At Location A, humidity gradually decreased from approximately 48.0 %RH to around 47.4 %RH. At Location B, humidity remained relatively stable around 47.9–48.2 %RH.
+
+These results demonstrate that the DHT11 can detect differences in environmental temperature between locations.
+
+#### Engineering Interpretation
+
+The experiment demonstrated that the DHT11 measurements are affected by the surrounding environmental conditions.
+
+The most significant change was observed in temperature. Location A was warmer, with measurements around **25.1–25.3 °C**, whereas Location B produced lower temperature measurements, reaching approximately **24.1 °C**.
+
+The humidity measurements showed considerably smaller changes. This indicates that the humidity conditions at the two locations were relatively similar even though their temperatures differed.
+
+The gradual temperature change after moving the sensor also demonstrates that the DHT11 does not necessarily change immediately to the final environmental value. The sensor requires some time to respond to and stabilize under the new environmental conditions.
+
+This behavior is important for the Smart Agriculture Monitoring and Irrigation System because environmental sensors may need a stabilization period after installation or movement before their measurements are interpreted by the monitoring or machine-learning components.
+
+As with the previous experiments, this experiment does **not establish the absolute measurement accuracy** of the DHT11 because the sensor was not compared against a calibrated reference instrument.
+
+#### Experiment 3 Graphs
+
+**Temperature vs. Time**
+
+![DHT11 Experiment 3 Temperature](images/dht11_experiment3_temperature.png)
+
+**Humidity vs. Time**
+
+![DHT11 Experiment 3 Humidity](images/dht11_experiment3_humidity.png)
+
+The graphs show the temperature and humidity measurements throughout the experiment. The transition from **Location A to Location B occurred at approximately 5 minutes**.
+
+#### Dataset
+
+The complete experimental dataset is available at:
+
+`data/dht11/experiment3_different_location.csv`
+
+The dataset contains the following columns:
+
+```text
+Temperature_C,Humidity_RH
+```
+
+#### DHT11 Characterization Status
 
 * [x] Understand DHT11 operation
 * [x] Connect DHT11 to ESP32
 * [x] Collect stable-condition measurements
 * [x] Test environmental response
 * [x] Test recovery behavior
-* [x] Store measurements as CSV
-* [x] Document hardware setup
-* [x] Document wiring
-* [x] Complete statistical analysis
-* [x] Generate response graphs
-* [ ] Test sensor in a different location
+* [x] Test sensor at different locations
+* [x] Analyze temperature and humidity variation
+* [x] Generate temperature and humidity graphs
+
+The results from these experiments provide an initial characterization of the DHT11 sensor before integrating it into the complete Smart Agriculture Monitoring and Irrigation System.
