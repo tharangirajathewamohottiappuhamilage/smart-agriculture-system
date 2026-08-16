@@ -436,7 +436,7 @@ The sensor was configured as:
 
 ```cpp
 #define LDR_PIN 34
-
+```
 ### Data Format
 
 The sensor output was changed to a CSV-compatible format to simplify data collection and later analysis:
