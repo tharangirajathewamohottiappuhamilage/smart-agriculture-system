@@ -1,35 +1,22 @@
 #include <Arduino.h>
-#include <DHT.h>
 
-#define DHT_PIN 17
-#define DHT_TYPE DHT11
-
-DHT dht(DHT_PIN, DHT_TYPE);
+#define LDR_PIN 34
 
 void setup()
 {
     Serial.begin(115200);
 
-    dht.begin();
+    delay(1000);
 
-    Serial.println("Temperature_C,Humidity_RH");
+    Serial.println("LDR Experiment 1 - Stable Room Light");
+    Serial.println("ADC_Value");
 }
 
 void loop()
 {
-    float humidity = dht.readHumidity();
-    float temperature = dht.readTemperature();
+    int ldrValue = analogRead(LDR_PIN);
 
-    if (isnan(humidity) || isnan(temperature))
-    {
-        Serial.println("ERROR,ERROR");
-        delay(2000);
-        return;
-    }
+    Serial.println(ldrValue);
 
-    Serial.print(temperature, 2);
-    Serial.print(",");
-    Serial.println(humidity, 2);
-
-    delay(2000);
+    delay(1000);
 }

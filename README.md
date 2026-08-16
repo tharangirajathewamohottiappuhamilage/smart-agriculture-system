@@ -391,3 +391,140 @@ Temperature_C,Humidity_RH
 * [x] Generate temperature and humidity graphs
 
 The results from these experiments provide an initial characterization of the DHT11 sensor before integrating it into the complete Smart Agriculture Monitoring and Irrigation System.
+
+
+## 3. LDR Light Sensor
+
+### Objective
+
+The LDR sensor was investigated to understand how its analog output changes with different light conditions, including stable room lighting, darkness, and bright light.
+
+The sensor was tested independently using an ESP32 before integrating it with the complete Smart Agriculture Monitoring and Irrigation System.
+
+### Hardware
+
+* **Microcontroller:** ESP32
+* **Sensor:** Photoresistor (LDR)
+* **Measurement:** Analog light intensity
+* **Output:** ADC value
+* **ADC resolution:** 12-bit
+* **ADC range:** 0–4095
+* **Communication:** Analog
+* **LDR ADC pin:** GPIO 34
+
+### LDR Wiring
+
+The photoresistor circuit was connected to the ESP32 analog input. The ESP32 reads the voltage produced by the LDR circuit using its ADC.
+
+| LDR Circuit | ESP32 |
+| ----------- | ----- |
+| VCC         | 3.3V  |
+| Analog OUT  | GPIO 34 |
+| GND         | GND   |
+
+![LDR Setup](images/ldr_setup.jpeg)
+
+![LDR Wiring](images/ldr_wiring_diagram.jpeg)
+
+### Software
+
+The LDR was programmed using PlatformIO and the Arduino framework.
+
+The ESP32 reads the analog value from the LDR using the `analogRead()` function.
+
+The sensor was configured as:
+
+```cpp
+#define LDR_PIN 34
+
+### Data Format
+
+The sensor output was changed to a CSV-compatible format to simplify data collection and later analysis:
+
+```text
+ADC_Value
+3712
+3677
+3747
+3713
+3702
+```
+
+### Serial Monitor Output
+
+The LDR measurements were observed through the PlatformIO Serial Monitor.
+
+![LDR Serial Output](images/ldr_serial_output.png)
+
+---
+
+## LDR Experiments
+
+Three experiments were performed to characterize the behavior of the LDR under different lighting conditions.
+
+
+### LDR Experiment 1 — Stable Room Light
+
+#### Objective
+
+The first LDR experiment investigated the stability of the ESP32 ADC readings under normal, relatively stable room-light conditions.
+
+#### Experimental Procedure
+
+The LDR was connected to the ESP32 and positioned under normal room lighting. The ADC value was recorded continuously for approximately 10 minutes.
+
+The experiment produced 603 ADC measurements.
+
+The complete dataset is stored in:
+
+`data/ldr/experiment1_stable.csv`
+
+#### Statistical Results
+
+| Parameter | Result |
+|---|---:|
+| Number of readings | 603 |
+| Minimum ADC value | 3515 |
+| Maximum ADC value | 3747 |
+| Average ADC value | 3635.06 |
+| Median ADC value | 3634 |
+| ADC range | 232 |
+| Standard deviation | 42.72 |
+| Coefficient of variation | 1.18% |
+| First reading | 3712 |
+| Last reading | 3659 |
+| Change, first → last | -53 ADC |
+| Percentage change | -1.43% |
+
+#### Observations
+
+During the stable-room-light experiment, the LDR produced ADC values between **3515 and 3747**, with an average ADC value of **3635.06**.
+
+The readings remained within a relatively narrow range throughout the experiment. The coefficient of variation was **1.18%**, indicating relatively stable ADC output under the tested room-light condition.
+
+The first reading was **3712** and the final reading was **3659**, corresponding to a decrease of **53 ADC counts**, or approximately **1.43%**.
+
+#### Engineering Interpretation
+
+The experiment demonstrates that the LDR and ESP32 ADC can provide relatively stable measurements when the lighting environment remains approximately constant.
+
+However, ADC stability should not be interpreted as light-measurement accuracy. The experiment does not establish an absolute relationship between ADC value and illuminance (lux), because no calibrated light meter was used.
+
+The results from this experiment will be used as a baseline for comparison with measurements obtained under dark and bright-light conditions.
+
+#### Graph
+
+The ADC readings were plotted against measurement time to visualize the stability of the LDR output.
+
+![LDR Experiment 1 - ADC vs Time](images/ldr_experiment1_adc_vs_time.png)
+
+#### LDR Experiment 1 Status
+
+- [x] Connect LDR to ESP32
+- [x] Test normal room lighting
+- [x] Collect approximately 10 minutes of data
+- [x] Calculate statistical characteristics
+- [x] Analyze ADC stability
+- [ ] Test covered/dark condition
+- [ ] Test bright-light condition
+- [ ] Compare ADC response under different lighting conditions
