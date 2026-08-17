@@ -8,7 +8,7 @@ void setup()
 
     delay(1000);
 
-    Serial.println("LDR Experiment 1 - Stable Room Light");
+    Serial.println("LDR Experiment 2 - Covered/Dark Condition");
     Serial.println("ADC_Value");
 }
 

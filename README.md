@@ -518,13 +518,89 @@ The ADC readings were plotted against measurement time to visualize the stabilit
 
 ![LDR Experiment 1 - ADC vs Time](images/ldr_experiment1_adc_vs_time.png)
 
-#### LDR Experiment 1 Status
+
+### Experiment 2 — Covered/Dark Condition
+
+#### Objective
+
+The second experiment investigated how the LDR ADC output changes when the photoresistor is exposed to a very low-light or dark condition.
+
+The purpose was to compare the dark-condition response with the normal room-light baseline obtained in Experiment 1.
+
+#### Experimental Procedure
+
+The photoresistor was completely covered to prevent room light from reaching the sensor.
+
+The ADC value was then recorded using the ESP32.
+
+The sampling interval was approximately **1 second**, and approximately **5 minutes** of measurements were collected.
+
+The complete dataset is stored in:
+
+`data/ldr/experiment2_dark.csv`
+
+#### Observations
+
+During the covered/dark condition, the LDR produced an ADC value of **0 throughout the experiment**.
+
+A total of **303 readings** were collected.
+
+The recorded ADC values were:
+
+- Minimum: **0**
+- Maximum: **0**
+- Average: **0.00**
+- Range: **0**
+
+This indicates that the LDR circuit produced a very low ADC output when the photoresistor was completely covered.
+
+#### Statistical Summary
+
+| Statistic | ADC Value |
+| --------- | ---------: |
+| Number of readings | 303 |
+| Minimum | 0 |
+| Maximum | 0 |
+| Average | 0.00 |
+| Range | 0 |
+
+#### Graph
+
+The ADC response over time is shown below:
+
+![LDR Experiment 2 ADC vs Time](images/ldr_experiment2_adc_vs_time.png)
+
+#### Engineering Interpretation
+
+The experiment demonstrated a clear response of the LDR circuit to the covered/dark condition.
+
+Under normal room lighting, the ADC values were in the thousands, while under the covered/dark condition the measured ADC value was **0**.
+
+This provides a useful baseline for detecting very low-light conditions in the Smart Agriculture Monitoring and Irrigation System.
+
+The experiment characterizes the ADC response of the particular LDR module and ESP32 setup. 
+
+It does not establish an absolute light-intensity measurement in lux because no calibrated light meter was used.
+
+---
+
+## LDR Data
+
+The experimental datasets are stored in the following directory:
+
+```text
+data/
+└── ldr/
+    ├── experiment1_stable.csv
+    └── experiment2_dark.csv
+
+#### LDR Characterization Status
 
 - [x] Connect LDR to ESP32
 - [x] Test normal room lighting
 - [x] Collect approximately 10 minutes of data
 - [x] Calculate statistical characteristics
 - [x] Analyze ADC stability
-- [ ] Test covered/dark condition
+- [x] Test covered/dark condition
 - [ ] Test bright-light condition
 - [ ] Compare ADC response under different lighting conditions
