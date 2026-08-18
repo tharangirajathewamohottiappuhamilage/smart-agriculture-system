@@ -674,7 +674,7 @@ Together with the dark-condition experiment, these results demonstrate that the 
 
 The results can therefore be used as a basis for developing a light-level threshold for the Smart Agriculture Monitoring and Irrigation System.
 
----
+
 
 ## LDR Data
 
@@ -687,6 +687,7 @@ data/
     └── experiment2_dark.csv
     └── experiment3_bright.csv
 ```
+---
 
 ### Light-Level Threshold Determination
 
@@ -735,59 +736,6 @@ ADC Value
 
 ---
 
-### LDR Threshold Validation
-
-#### Objective
-
-The threshold validation experiment was performed to determine whether the ADC ranges identified during the previous LDR experiments could be used to classify different lighting conditions.
-
-Additional lighting conditions were tested using the same ESP32 and LDR circuit. The measured ADC values were compared with the results from the previous experiments to identify suitable empirical thresholds for the Smart Agriculture Monitoring and Irrigation System.
-
-The thresholds are specific to the tested ESP32, LDR circuit, and experimental setup. They should therefore be considered empirical thresholds rather than universal light-intensity limits.
-
-#### Experimental Conditions
-
-Four lighting conditions were evaluated:
-
-| Condition | Description |
-| --------- | ----------- |
-| Dark | LDR covered / very little light |
-| Dim Light | Low-level room lighting |
-| Normal Room Light | Normal indoor room lighting |
-| Direct Flashlight | Direct light from a flashlight |
-
-Approximately 100 readings were collected for each additional validation condition.
-
-#### Statistical Results
-
-The following table summarizes the ADC measurements collected during threshold validation:
-
-| Condition | Number of Readings | Minimum ADC | Maximum ADC | Average ADC | Range |
-| --------- | -----------------: | ----------: | ----------: | ----------: | ----: |
-| Dark | 32 | 0 | 53 | ~18 | 53 |
-| Dim Light | 100 | 537 | 737 | 645.43 | 200 |
-| Normal Room Light | 100 | 2928 | 3050 | 2985.64 | 122 |
-| Direct Flashlight | 101 | 3887 | 4057 | 3981.78 | 170 |
-
-The results show clear separation between the tested lighting conditions.
-
-The measured ADC ranges were approximately:
-
-```text
-Dark
-0–53
-
-Dim Light
-537–737
-
-Normal Room Light
-2928–3050
-
-Direct Flashlight
-3887–4057
-```
-
----
 
 ### LDR Threshold Validation
 
@@ -872,6 +820,6 @@ Therefore:
 - [x] Analyze minimum and maximum ADC values
 - [x] Generate ADC vs. Time graphs
 - [x] Determine light-level thresholds
-- [ ] Validate thresholds under additional lighting conditions
+- [x] Validate thresholds under additional lighting conditions
 - [ ] Integrate LDR with the complete system    
 
