@@ -584,6 +584,98 @@ It does not establish an absolute light-intensity measurement in lux because no 
 
 ---
 
+
+### Experiment 3 — Bright Light Condition
+
+#### Objective
+
+The third experiment investigated the response of the LDR sensor under a bright-light condition.
+
+The purpose was to determine how the ESP32 ADC value changes when the photoresistor is exposed to a high level of illumination and to evaluate the stability of the sensor readings under this condition.
+
+The LDR was tested independently using the ESP32 before integrating it with the complete Smart Agriculture Monitoring and Irrigation System.
+
+#### Experimental Procedure
+
+For this experiment, the LDR sensor was exposed to a bright light source.
+
+The ESP32 continuously measured the analog output of the LDR using its ADC input.
+
+The experiment consisted of approximately **302 ADC readings** collected at a sampling interval of approximately **1 second**.
+
+The ADC values were recorded in the following CSV file:
+
+`data/ldr/experiment3_bright_light.csv`
+
+#### Experimental Condition
+
+| Parameter | Condition |
+|---|---|
+| Experiment | Experiment 3 |
+| Light condition | Bright light |
+| Sensor | Photoresistor (LDR) |
+| Microcontroller | ESP32 |
+| ADC pin | GPIO 34 |
+| Number of readings | 302 |
+| Sampling interval | Approximately 1 second |
+| ADC resolution | 12-bit |
+| ADC range | 0–4095 |
+
+#### Statistical Analysis
+
+The collected ADC measurements were analyzed using the minimum, maximum, and range.
+
+| Statistic | ADC Value |
+|---|---:|
+| Number of readings | 302 |
+| Minimum | 3975 |
+| Maximum | 4095 |
+| Range | 120 |
+
+The readings were concentrated close to the upper end of the ESP32 ADC range. Many measurements were above 4000, and several readings reached the maximum ADC value of **4095**.
+
+#### Observations
+
+The LDR produced very high ADC values when exposed to bright light.
+
+The majority of the measurements were approximately between **4000 and 4095**, indicating that the sensor output was close to the upper limit of the ESP32 ADC range.
+
+Several readings reached **4095**, which is the maximum value that can be represented by the 12-bit ADC.
+
+The minimum recorded value was **3975**, while the maximum was **4095**, giving an observed range of **120 ADC units**.
+
+Compared with the covered/dark experiment, where the ADC values were close to zero, the bright-light experiment produced a substantially higher ADC response.
+
+#### Engineering Interpretation
+
+The experiment demonstrates that the LDR module produces a strong ADC response when exposed to bright light.
+
+The large difference between the dark-condition measurements and the bright-light measurements makes the sensor suitable for detecting significant changes in illumination.
+
+However, the readings in bright light are close to the maximum ADC value of 4095. This indicates that the sensor output is approaching ADC saturation under strong illumination.
+
+This is important for the final Smart Agriculture Monitoring and Irrigation System because the LDR can be used to distinguish between dark, normal-light, and bright-light conditions. However, additional calibration experiments would be required if accurate light-intensity measurement rather than simple light-level classification is needed.
+
+#### ADC vs. Time
+
+The ADC values were plotted against the measurement sequence to visualize the LDR response during the bright-light experiment.
+
+![LDR Experiment 3 - Bright Light ADC vs Time](images/ldr_experiment3_adc_vs_time.png)
+
+The graph shows that the ADC readings remain at a high level throughout the experiment, with relatively small fluctuations compared with the overall ADC value.
+
+#### Conclusion
+
+The bright-light experiment confirmed that the LDR sensor responds strongly to increased illumination.
+
+The ESP32 ADC readings remained close to the upper ADC limit, with values ranging from **3975 to 4095** across the 302 collected measurements.
+
+Together with the dark-condition experiment, these results demonstrate that the LDR can provide a clear electrical response to different lighting conditions.
+
+The results can therefore be used as a basis for developing a light-level threshold for the Smart Agriculture Monitoring and Irrigation System.
+
+---
+
 ## LDR Data
 
 The experimental datasets are stored in the following directory:
@@ -593,14 +685,193 @@ data/
 └── ldr/
     ├── experiment1_stable.csv
     └── experiment2_dark.csv
+    └── experiment3_bright.csv
+```
 
-#### LDR Characterization Status
+### Light-Level Threshold Determination
 
+The results from the three LDR experiments were compared to determine initial ADC-based light-level thresholds.
+
+The measured ranges were:
+
+| Light Condition | Minimum ADC | Maximum ADC |
+|---|---:|---:|
+| Covered / Dark | 0 | 53 |
+| Normal Room Light | 3515 | 3747 |
+| Bright Light | 3975 | 4095 |
+
+The measurements showed clear separation between the tested lighting conditions.
+
+Based on these experimental results, the following initial thresholds were defined:
+
+| Light Level | ADC Range | Interpretation |
+|---|---:|---|
+| Dark | 0–100 | Very little light |
+| Normal | 101–3900 | Normal/intermediate light |
+| Bright | 3901–4095 | Strong light |
+
+These thresholds were selected with margins around the experimentally observed values. The dark threshold of 100 ADC is above the maximum dark-condition measurement of 53 ADC. The bright threshold of 3901 ADC is below the minimum bright-light measurement of 3975 ADC and above the maximum normal-room-light measurement of 3747 ADC.
+
+The thresholds are specific to the current LDR module, ESP32 ADC configuration, sensor orientation, and tested environmental conditions. They should therefore be considered initial engineering thresholds rather than universal light-intensity values.
+
+The ADC readings are not directly converted to lux because no calibrated light meter was used during the experiments.
+
+#### Initial Light Classification
+
+The current classification logic can be represented as:
+
+```text
+ADC Value
+    |
+    ├── 0–100
+    │     └── DARK
+    |
+    ├── 101–3900
+    │     └── NORMAL
+    |
+    └── 3901–4095
+          └── BRIGHT
+```
+
+---
+
+### LDR Threshold Validation
+
+#### Objective
+
+The threshold validation experiment was performed to determine whether the ADC ranges identified during the previous LDR experiments could be used to classify different lighting conditions.
+
+Additional lighting conditions were tested using the same ESP32 and LDR circuit. The measured ADC values were compared with the results from the previous experiments to identify suitable empirical thresholds for the Smart Agriculture Monitoring and Irrigation System.
+
+The thresholds are specific to the tested ESP32, LDR circuit, and experimental setup. They should therefore be considered empirical thresholds rather than universal light-intensity limits.
+
+#### Experimental Conditions
+
+Four lighting conditions were evaluated:
+
+| Condition | Description |
+| --------- | ----------- |
+| Dark | LDR covered / very little light |
+| Dim Light | Low-level room lighting |
+| Normal Room Light | Normal indoor room lighting |
+| Direct Flashlight | Direct light from a flashlight |
+
+Approximately 100 readings were collected for each additional validation condition.
+
+#### Statistical Results
+
+The following table summarizes the ADC measurements collected during threshold validation:
+
+| Condition | Number of Readings | Minimum ADC | Maximum ADC | Average ADC | Range |
+| --------- | -----------------: | ----------: | ----------: | ----------: | ----: |
+| Dark | 32 | 0 | 53 | ~18 | 53 |
+| Dim Light | 100 | 537 | 737 | 645.43 | 200 |
+| Normal Room Light | 100 | 2928 | 3050 | 2985.64 | 122 |
+| Direct Flashlight | 101 | 3887 | 4057 | 3981.78 | 170 |
+
+The results show clear separation between the tested lighting conditions.
+
+The measured ADC ranges were approximately:
+
+```text
+Dark
+0–53
+
+Dim Light
+537–737
+
+Normal Room Light
+2928–3050
+
+Direct Flashlight
+3887–4057
+```
+
+---
+
+### LDR Threshold Validation
+
+#### Objective
+
+The threshold validation experiment was performed to determine whether the ADC ranges identified during the previous LDR experiments could be used to classify different lighting conditions.
+
+Additional lighting conditions were tested using the same ESP32 and LDR circuit. The measured ADC values were compared with the results from the previous experiments to validate suitable empirical thresholds for the Smart Agriculture Monitoring and Irrigation System.
+
+The thresholds are specific to the tested ESP32, LDR circuit, and experimental setup. They should therefore be considered empirical thresholds rather than universal light-intensity limits.
+
+#### Experimental Conditions
+
+Five lighting conditions were evaluated:
+
+| Condition | Description |
+| --------- | ----------- |
+| Dark | LDR covered / very little light |
+| Dim Light | Low-level room lighting |
+| Normal Room Light | Normal indoor room lighting |
+| Direct Flashlight | Direct light from a flashlight |
+| Indirect Daylight | Daylight near a window without directly illuminating the sensor |
+
+#### Statistical Results
+
+The following table summarizes the ADC measurements collected during the threshold validation experiments:
+
+| Condition | Number of Readings | Minimum ADC | Maximum ADC | Average ADC | Range |
+| --------- | -----------------: | ----------: | ----------: | ----------: | ----: |
+| Dark | 32 | 0 | 53 | ~18 | 53 |
+| Dim Light | 100 | 537 | 737 | 645.43 | 200 |
+| Normal Room Light | 100 | 2928 | 3050 | 2985.64 | 122 |
+| Direct Flashlight | 101 | 3887 | 4057 | 3981.78 | 170 |
+| Indirect Daylight | 100 | 4053 | 4095 | 4093.04 | 42 |
+
+#### Observations
+
+The LDR ADC value increased as the amount of incident light increased.
+
+The dark condition produced very low ADC values, ranging from approximately 0 to 53.
+
+Under dim lighting, the ADC values increased to 537–737, providing clear separation from the dark condition.
+
+Under normal room lighting, the ADC values ranged from 2928 to 3050.
+
+Direct flashlight illumination produced higher ADC values, ranging from 3887 to 4057.
+
+The additional indirect-daylight condition produced very high ADC values, ranging from 4053 to 4095. This confirmed that the additional lighting condition was also classified as bright.
+
+There was no overlap between the measured ADC ranges of the tested dark, dim, normal, and bright conditions.
+
+#### Indirect Daylight Validation
+
+The additional indirect-daylight condition was used to validate the previously proposed bright-light threshold.
+
+The 100 collected readings produced the following results:
+
+| Parameter | Result |
+| --------- | ------: |
+| Number of readings | 100 |
+| Minimum ADC | 4053 |
+| Maximum ADC | 4095 |
+| Average ADC | 4093.04 |
+| Range | 42 |
+
+All 100 readings were above the proposed bright-light threshold of 3501.
+
+Therefore:
+
+```text
+100 / 100 readings → Bright
+```
+
+### LDR Characterization Status
+
+- [x] Understand LDR/photoresistor operation
 - [x] Connect LDR to ESP32
-- [x] Test normal room lighting
-- [x] Collect approximately 10 minutes of data
-- [x] Calculate statistical characteristics
-- [x] Analyze ADC stability
+- [x] Test stable room-light condition
 - [x] Test covered/dark condition
-- [ ] Test bright-light condition
-- [ ] Compare ADC response under different lighting conditions
+- [x] Test bright-light condition
+- [x] Collect ADC measurements
+- [x] Analyze minimum and maximum ADC values
+- [x] Generate ADC vs. Time graphs
+- [x] Determine light-level thresholds
+- [ ] Validate thresholds under additional lighting conditions
+- [ ] Integrate LDR with the complete system    
+
