@@ -907,13 +907,14 @@ DARK → DIM → NORMAL → BRIGHT
 
 Two transition experiments were performed:
 
-Increasing illumination: DARK → DIM → NORMAL → BRIGHT
-Decreasing illumination: BRIGHT → NORMAL → DIM → DARK
----
+1.Increasing illumination: DARK → DIM → NORMAL → BRIGHT
+2.Decreasing illumination: BRIGHT → NORMAL → DIM → DARK
+
+
 
 The purpose was to verify that the classifier changes categories in the expected order without unexpected classification changes or oscillation.
 
-#### Experiment A — Increasing Light
+### Experiment A — Increasing Light
 
 The first experiment started with the LDR completely covered and the illumination was gradually increased.
 
@@ -955,9 +956,9 @@ Classification consistency:
 **89/89 = 100%**
 
 There were no observed incorrect classifications.
----
 
-#### Experiment B — Decreasing Light
+
+### Experiment B — Decreasing Light
 
 The second experiment tested the reverse transition. The illumination was gradually decreased from a bright condition.
 
@@ -1001,7 +1002,7 @@ Classification consistency:
 **101/101 = 100%**
 
 There were no observed incorrect classifications.
----
+
 
 #### Combined Gradual Transition Validation
 
@@ -1016,7 +1017,7 @@ Both increasing-light and decreasing-light experiments were completed to test th
 Across both experiments, a total of **190** readings were analyzed.
 
 All 190 readings were classified consistently, with no observed classification oscillation.
----
+
 
 #### Engineering Interpretation
 
@@ -1037,20 +1038,20 @@ The results provide evidence that the current LDR classification logic behaves c
 The observed transition regions can also be used to understand the behavior of the classification thresholds. However, these transition regions should not be considered exact threshold boundaries because the ADC values between the observed transition points were not sampled continuously.
 
 The results are specific to the experimental conditions used during testing and do not establish universal threshold validity for all possible lighting environments.
----
 
-#### Gradual Lighting Transition Validation Status
+
+### Gradual Lighting Transition Validation Status
 - [x] Test increasing illumination
-- [x]Test decreasing illumination
-- [x]Record ADC values and classifications
+- [x] Test decreasing illumination
+- [x] Record ADC values and classifications
 - [x] Determine observed transition regions
-- [x]Check for classification oscillation
-- [x]Validate classification stability
-- [x]Compare increasing and decreasing transitions
-- [x]Confirm 100% consistency for the tested readings
+- [x] Check for classification oscillation
+- [x] Validate classification stability
+- [x] Compare increasing and decreasing transitions
+- [x] Confirm 100% consistency for the tested readings
 
 Result: The LDR classification system achieved 100% classification consistency across 190 tested readings during gradual lighting transitions.
----
+
 
 ### LDR Characterization Status
 
