@@ -809,6 +809,249 @@ Therefore:
 100 / 100 readings → Bright
 ```
 
+---
+
+### LDR Classification Integration
+
+#### Objective
+
+After experimentally determining and validating the LDR ADC thresholds, the light-level classification was integrated into the ESP32 firmware.
+
+Instead of reporting only the raw ADC value, the ESP32 now converts the measured ADC value into a light-level category.
+
+The classification uses the empirically determined thresholds:
+
+| ADC Range | Light Classification |
+| --------- | -------------------- |
+| 0–100 | Dark |
+| 101–1000 | Dim |
+| 1001–3500 | Normal |
+| 3501–4095 | Bright |
+
+#### Classification Logic
+
+The ESP32 reads the LDR through ADC GPIO 34 and classifies the measured value according to the experimentally validated thresholds.
+
+```cpp
+if (ldrValue <= 100)
+{
+    lightLevel = "DARK";
+}
+else if (ldrValue <= 1000)
+{
+    lightLevel = "DIM";
+}
+else if (ldrValue <= 3500)
+{
+    lightLevel = "NORMAL";
+}
+else
+{
+    lightLevel = "BRIGHT";
+}
+```
+
+
+### LDR Classification Integration Test
+
+The LDR classification logic was integrated into the ESP32 system to convert raw ADC measurements into four light-level categories:
+
+- `DARK`
+- `DIM`
+- `NORMAL`
+- `BRIGHT`
+
+The classification logic was tested under four different lighting conditions.
+
+#### Classification Results
+
+| Lighting Condition | Minimum ADC | Maximum ADC | ADC Range | Classification | Correct |
+|---|---:|---:|---:|---|---:|
+| DARK | 0 | 42 | 42 | DARK | 14/14 |
+| DIM | 257 | 384 | 127 | DIM | 14/14 |
+| NORMAL | 2768 | 2863 | 95 | NORMAL | 14/14 |
+| BRIGHT | 3825 | 3982 | 157 | BRIGHT | 14/14 |
+
+#### Overall Classification Performance
+
+A total of 56 readings were collected during the integration tests.
+
+| Metric | Result |
+|---|---:|
+| Total readings | 56 |
+| Correct classifications | 56 |
+| Incorrect classifications | 0 |
+| Classification consistency | 100% |
+
+#### Observation
+
+The LDR classification logic correctly classified all tested readings into their corresponding lighting categories.
+
+The DARK condition produced very low ADC values, while the DIM condition produced higher values. Normal room light produced substantially higher ADC values, and the BRIGHT condition produced values close to the upper limit of the ESP32 ADC range.
+
+The results demonstrate that the current LDR classification logic provides consistent classification under the tested lighting conditions.
+
+This result represents classification consistency for the tested experimental conditions and does not establish absolute light-intensity accuracy or guarantee performance under all possible lighting environments.
+
+### Gradual Lighting Transition Validation
+
+A gradual lighting transition experiment was performed to determine whether the LDR classification remains stable when the illumination level changes progressively.
+
+The light level was gradually increased from a dark condition through dim and normal room lighting to a bright condition.
+
+The classification categories were:
+
+```text
+DARK → DIM → NORMAL → BRIGHT
+```
+
+Two transition experiments were performed:
+
+Increasing illumination: DARK → DIM → NORMAL → BRIGHT
+Decreasing illumination: BRIGHT → NORMAL → DIM → DARK
+---
+
+The purpose was to verify that the classifier changes categories in the expected order without unexpected classification changes or oscillation.
+
+#### Experiment A — Increasing Light
+
+The first experiment started with the LDR completely covered and the illumination was gradually increased.
+
+The expected classification sequence was:
+
+DARK → DIM → NORMAL → BRIGHT
+
+A total of 89 readings were collected.
+
+#### Results
+| Classification | Readings | Minimum ADC | Maximum ADC | ADC Range |   Correct |
+| -------------- | -------: | ----------: | ----------: | --------: | --------: |
+| DARK           |       19 |           0 |          85 |        85 |     19/19 |
+| DIM            |       19 |         123 |         823 |       700 |     19/19 |
+| NORMAL         |       35 |        1100 |        3408 |      2308 |     35/35 |
+| BRIGHT         |       16 |        3571 |        3621 |        50 |     16/16 |
+| **Total**      |   **89** |       **0** |    **3621** |         — | **89/89** |
+
+#### Observed Transition Regions
+
+| Transition      | Previous Category | Next Category | Observed Transition Region |
+| --------------- | ----------------: | ------------: | -------------------------: |
+| DARK → DIM      |            85 ADC |       123 ADC |                 85–123 ADC |
+| DIM → NORMAL    |           823 ADC |      1100 ADC |               823–1100 ADC |
+| NORMAL → BRIGHT |          3408 ADC |      3571 ADC |              3408–3571 ADC |
+
+These values represent the observed transition regions during the experiment. They should not be interpreted as exact threshold boundaries because intermediate ADC values were not sampled continuously.
+
+#### Increasing-Light Stability
+
+The classifier followed the expected sequence:
+
+DARK → DIM → NORMAL → BRIGHT
+
+No classification oscillation was observed during the gradual increase in illumination.
+
+Classification consistency:
+
+**89/89 = 100%**
+
+There were no observed incorrect classifications.
+---
+
+#### Experiment B — Decreasing Light
+
+The second experiment tested the reverse transition. The illumination was gradually decreased from a bright condition.
+
+The expected classification sequence was:
+
+```text
+BRIGHT → NORMAL → DIM → DARK
+```
+
+A total of 101 readings were collected.
+
+#### Results
+| Classification | Readings | Minimum ADC | Maximum ADC | ADC Range |     Correct |
+| -------------- | -------: | ----------: | ----------: | --------: | ----------: |
+| BRIGHT         |       21 |        3555 |        3863 |       308 |       21/21 |
+| NORMAL         |       27 |        1073 |        3474 |      2401 |       27/27 |
+| DIM            |       38 |         111 |         976 |       865 |       38/38 |
+| DARK           |       15 |           0 |          84 |        84 |       15/15 |
+| **Total**      |  **101** |       **0** |    **3863** |         — | **101/101** |
+
+#### Observed Transition Regions
+
+| Transition      | Previous Category | Next Category | Observed Transition Region |
+| --------------- | ----------------: | ------------: | -------------------------: |
+| BRIGHT → NORMAL |          3555 ADC |      3474 ADC |              3474–3555 ADC |
+| NORMAL → DIM    |          1073 ADC |       976 ADC |               976–1073 ADC |
+| DIM → DARK      |           111 ADC |        75 ADC |                 75–111 ADC |
+
+These values represent the observed transition regions during the experiment. They should not be interpreted as exact threshold boundaries because intermediate ADC values were not sampled continuously.
+
+#### Decreasing-Light Stability
+
+The classifier followed the expected sequence:
+
+BRIGHT → NORMAL → DIM → DARK
+
+No classification oscillation was observed during the gradual decrease in illumination.
+
+Classification consistency:
+
+**101/101 = 100%**
+
+There were no observed incorrect classifications.
+---
+
+#### Combined Gradual Transition Validation
+
+Both increasing-light and decreasing-light experiments were completed to test the stability of the LDR classification system in both directions.
+
+| Test Direction   | Classification Sequence      | Readings |     Correct | Consistency |
+| ---------------- | ---------------------------- | -------: | ----------: | ----------: |
+| Increasing light | DARK → DIM → NORMAL → BRIGHT |       89 |       89/89 |        100% |
+| Decreasing light | BRIGHT → NORMAL → DIM → DARK |      101 |     101/101 |        100% |
+| **Combined**     | —                            |  **190** | **190/190** |    **100%** |
+
+Across both experiments, a total of **190** readings were analyzed.
+
+All 190 readings were classified consistently, with no observed classification oscillation.
+---
+
+#### Engineering Interpretation
+
+The gradual lighting transition experiments demonstrated that the LDR classification system remained stable while the illumination level was changed gradually in both directions.
+
+During increasing illumination, the classifier progressed through:
+
+DARK → DIM → NORMAL → BRIGHT
+
+During decreasing illumination, the classifier progressed through:
+
+BRIGHT → NORMAL → DIM → DARK
+
+No unexpected category changes or classification oscillations were observed in either experiment.
+
+The results provide evidence that the current LDR classification logic behaves consistently under the tested gradual lighting conditions.
+
+The observed transition regions can also be used to understand the behavior of the classification thresholds. However, these transition regions should not be considered exact threshold boundaries because the ADC values between the observed transition points were not sampled continuously.
+
+The results are specific to the experimental conditions used during testing and do not establish universal threshold validity for all possible lighting environments.
+---
+
+#### Gradual Lighting Transition Validation Status
+- [x] Test increasing illumination
+- [x]Test decreasing illumination
+- [x]Record ADC values and classifications
+- [x] Determine observed transition regions
+- [x]Check for classification oscillation
+- [x]Validate classification stability
+- [x]Compare increasing and decreasing transitions
+- [x]Confirm 100% consistency for the tested readings
+
+Result: The LDR classification system achieved 100% classification consistency across 190 tested readings during gradual lighting transitions.
+---
+
 ### LDR Characterization Status
 
 - [x] Understand LDR/photoresistor operation
@@ -821,5 +1064,6 @@ Therefore:
 - [x] Generate ADC vs. Time graphs
 - [x] Determine light-level thresholds
 - [x] Validate thresholds under additional lighting conditions
-- [ ] Integrate LDR with the complete system    
+- [x] Validate classification during gradual lighting transitions
+- [x] Integrate LDR with the complete system   
 

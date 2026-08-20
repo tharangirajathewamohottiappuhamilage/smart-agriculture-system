@@ -8,15 +8,36 @@ void setup()
 
     delay(1000);
 
-    Serial.println("LDR Experiment 4 - Threshold Validation");
-    Serial.println("ADC_Value");
+    Serial.println("Smart Agriculture - LDR Light Classification");
+    Serial.println("ADC_Value,Light_Level");
 }
 
 void loop()
 {
     int ldrValue = analogRead(LDR_PIN);
 
-    Serial.println(ldrValue);
+    const char* lightLevel;
+
+    if (ldrValue <= 100)
+    {
+        lightLevel = "DARK";
+    }
+    else if (ldrValue <= 1000)
+    {
+        lightLevel = "DIM";
+    }
+    else if (ldrValue <= 3500)
+    {
+        lightLevel = "NORMAL";
+    }
+    else
+    {
+        lightLevel = "BRIGHT";
+    }
+
+    Serial.print(ldrValue);
+    Serial.print(",");
+    Serial.println(lightLevel);
 
     delay(1000);
 }
