@@ -893,6 +893,8 @@ The results demonstrate that the current LDR classification logic provides consi
 
 This result represents classification consistency for the tested experimental conditions and does not establish absolute light-intensity accuracy or guarantee performance under all possible lighting environments.
 
+---
+
 ### Gradual Lighting Transition Validation
 
 A gradual lighting transition experiment was performed to determine whether the LDR classification remains stable when the illumination level changes progressively.
@@ -908,11 +910,13 @@ DARK → DIM → NORMAL → BRIGHT
 Two transition experiments were performed:
 
 1.Increasing illumination: DARK → DIM → NORMAL → BRIGHT
+
 2.Decreasing illumination: BRIGHT → NORMAL → DIM → DARK
 
 
-
 The purpose was to verify that the classifier changes categories in the expected order without unexpected classification changes or oscillation.
+
+---
 
 ### Experiment A — Increasing Light
 
@@ -957,6 +961,7 @@ Classification consistency:
 
 There were no observed incorrect classifications.
 
+---
 
 ### Experiment B — Decreasing Light
 
@@ -1039,6 +1044,7 @@ The observed transition regions can also be used to understand the behavior of t
 
 The results are specific to the experimental conditions used during testing and do not establish universal threshold validity for all possible lighting environments.
 
+---
 
 ### Gradual Lighting Transition Validation Status
 - [x] Test increasing illumination
@@ -1068,3 +1074,222 @@ Result: The LDR classification system achieved 100% classification consistency a
 - [x] Validate classification during gradual lighting transitions
 - [x] Integrate LDR with the complete system   
 
+
+## 3. Water Level Sensor
+
+### Objective
+
+The water level sensor was investigated to understand its analog output and how the ADC value changes according to the presence and level of water.
+
+The sensor was tested independently using an ESP32 before integrating it with the complete Smart Agriculture Monitoring and Irrigation System.
+
+### Hardware
+
+* **Microcontroller:** ESP32
+* **Sensor:** Water Level Sensor
+* **Output:** Analog
+* **ADC resolution:** 12-bit
+* **ADC range:** 0–4095
+* **Water Level Sensor signal pin:** GPIO 33
+
+### Water Level Sensor Wiring
+
+The water level sensor was connected to the ESP32 as follows:
+
+| Sensor Pin | ESP32 |
+| ---------- | ----- |
+| VCC        | 3.3V  |
+| GND        | GND   |
+| SIG        | GPIO 33 |
+
+![Water Level Sensor Setup](images/water_level_setup.jpeg)
+
+![Water Level Sensor Wiring](images/water_level_wiring_diagram.jpeg)
+
+### Software
+
+The water level sensor was programmed using PlatformIO and the Arduino framework.
+
+No additional sensor library was required because the sensor provides an analog output that can be read directly using the ESP32 ADC.
+
+The sensor was configured as:
+
+```cpp
+#define WATER_LEVEL_PIN 33
+```
+The ESP32 reads the analog output from the water level sensor using analogRead().
+
+The ADC value is used as an indicator of the amount of water detected by the sensing area.
+
+### Data Format
+
+The sensor output was recorded in CSV-compatible format to simplify data collection and later analysis:
+
+```text
+ADC_Value
+0
+0
+0
+0
+0
+```
+
+### Serial Monitor Output
+
+The water level sensor measurements were observed through the PlatformIO Serial Monitor.
+
+## Water Level Sensor Experiments
+
+Six experiments are planned to characterize the behavior of the water level sensor and develop a reliable water-level classification method.
+
+### Water Level Sensor Experiment 1 — Empty / No-Water Condition
+
+#### Objective
+
+The first water level sensor experiment investigated the basic behavior and stability of the ESP32 ADC readings when the sensor was in an empty, no-water condition.
+
+The sensor was tested independently using the ESP32 before integrating it with the complete Smart Agriculture Monitoring and Irrigation System.
+
+#### Experimental Procedure
+
+The water level sensor was connected to the ESP32 and kept completely dry with no water present on the sensing surface. The ADC value was recorded continuously for approximately 5 minutes.
+
+The experiment produced 300 ADC measurements.
+
+The complete dataset is stored in:
+
+`data/water_level/experiment1_empty.csv`
+
+#### Statistical Results
+
+| Parameter | Result |
+|---|---:|
+| Number of readings | 300 |
+| Minimum ADC value | 0 |
+| Maximum ADC value | 0 |
+| Average ADC value | 0.00 |
+| Median ADC value | 0 |
+| ADC range | 0 |
+| Standard deviation | 0.00 |
+| Coefficient of variation | 0.00% |
+| First reading | 0 |
+| Last reading | 0 |
+| Change, first → last | 0 ADC |
+| Percentage change | 0.00% |
+
+#### Observations
+
+During the empty/no-water experiment, the water level sensor produced ADC values between **0 and 0**, with an average ADC value of **0.00**.
+
+All 300 measurements were identical. Therefore, no variation was observed in the ADC output during the experiment.
+
+The first reading was **0** and the final reading was **0**, corresponding to a change of **0 ADC counts**, or **0.00%**.
+
+#### Engineering Interpretation
+
+The experiment demonstrates that the water level sensor and ESP32 ADC produced a completely stable output when no water was present under the tested conditions.
+
+The observed ADC value of **0** provides a baseline for the empty/no-water condition.
+
+However, this result should not yet be used as the final `EMPTY` classification threshold. Additional measurements at different water levels are required to determine how the ADC output changes as the sensing area becomes covered by water.
+
+The results from this experiment will be used as a baseline for comparison with measurements obtained at low, medium, high, and full water levels.
+
+#### Graph
+
+The ADC readings were plotted against measurement time to visualize the stability of the water level sensor output.
+
+![Water Level Sensor Experiment 1 - ADC vs Time](images/water_level_experiment1_adc_vs_time.png)
+
+### Experiment 2 — Different Water Levels
+
+#### Objective
+
+The second water level sensor experiment investigated how the ESP32 ADC reading changes as the amount of water covering the sensing area increases.
+
+Five water-level conditions were considered:
+
+- **EMPTY / No Water**
+- **LOW**
+- **MEDIUM**
+- **HIGH**
+- **FULL**
+
+The purpose of this experiment was to identify the ADC range associated with each water-level condition and determine whether the sensor output provides sufficient separation between the different levels.
+
+#### Experimental Procedure
+
+The water level sensor was connected to GPIO 33 of the ESP32.
+
+Measurements were collected for different water-level conditions by gradually increasing the amount of water covering the sensing area.
+
+The following conditions were tested:
+
+1. **EMPTY / No Water**
+2. **LOW**
+3. **MEDIUM**
+4. **HIGH**
+5. **FULL**
+
+For each condition, multiple ADC measurements were collected using the ESP32 ADC.
+
+The collected measurements are stored in:
+
+`data/water_level/experiment2_different_levels.csv`
+
+#### Statistical Results
+
+| Parameter | EMPTY / No Water | LOW | MEDIUM | HIGH | FULL |
+|---|---:|---:|---:|---:|---:|
+| Number of readings | 300 | 320 | 320 | 320 | 320 |
+| Minimum ADC value | 0 | 643 | 1793 | 2000 | 2061 |
+| Maximum ADC value | 0 | 1217 | 2005 | 2106 | 2176 |
+| Average ADC value | 0.00 | 897.65 | 1892.16 | 2069.55 | 2111.45 |
+| Median ADC value | 0 | 885.50 | 1889.00 | 2072.00 | 2112.00 |
+| ADC range | 0 | 574 | 212 | 106 | 115 |
+| Standard deviation | 0.00 | 110.15 | 57.59 | 31.03 | 22.89 |
+| Coefficient of variation | 0.00% | 12.27% | 3.04% | 1.50% | 1.08% |
+| First reading | 0 | 874 | 1998 | 2081 | 2118 |
+| Last reading | 0 | 778 | 1811 | 2060 | 2111 |
+| Change, first → last | 0 | -96 | -187 | -21 | -7 |
+| Percentage change | 0.00% | -10.98% | -9.36% | -1.01% | -0.33% |
+
+#### Observations
+
+The ADC output increased as the water level increased.
+
+Under the **EMPTY / No Water** condition, the sensor produced an ADC value of **0** throughout the measurements.
+
+For the **LOW** water-level condition, the ADC values ranged from **643 to 1217**, with an average value of **897.65**.
+
+For the **MEDIUM** water-level condition, the ADC values ranged from **1793 to 2005**, with an average value of **1892.16**.
+
+For the **HIGH** water-level condition, the ADC values ranged from **2000 to 2106**, with an average value of **2069.55**.
+
+For the **FULL** condition, the ADC values ranged from **2061 to 2176**, with an average value of **2111.45**.
+
+The results show a clear separation between the **EMPTY**, **LOW**, and **MEDIUM** conditions. However, there is some overlap between the ADC ranges of the **MEDIUM**, **HIGH**, and **FULL** conditions.
+
+The LOW condition also showed greater variation than the higher water-level conditions, with a standard deviation of **110.15 ADC counts** and a coefficient of variation of **12.27%**.
+
+#### Engineering Interpretation
+
+The experiment demonstrates that the water level sensor produces an increasing ADC response as the water level increases.
+
+The large difference between the EMPTY condition and the other water levels indicates that the sensor can clearly detect the presence of water in the tested setup.
+
+The results also suggest that the sensor can distinguish between LOW and MEDIUM water levels relatively well. However, the ADC ranges of MEDIUM, HIGH, and FULL overlap, meaning that final classification thresholds should not be selected based only on this experiment.
+
+Further experiments are therefore required to evaluate sensor stability and determine reliable thresholds.
+
+The results from this experiment will be used as the basis for:
+
+- **Experiment 3 — Stability**
+- **Experiment 4 — Threshold Determination**
+- **Experiment 5 — Changing Water Level**
+
+#### Graph
+
+The ADC measurements were compared across the different water-level conditions to visualize how the sensor output changes with increasing water level.
+
+![Water Level Sensor Experiment 2 - ADC vs Water Level](images/water_level_experiment2_adc_vs_water_level.png)

@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#define LDR_PIN 34
+#define WATER_LEVEL_PIN 33
 
 void setup()
 {
@@ -8,36 +8,17 @@ void setup()
 
     delay(1000);
 
-    Serial.println("Smart Agriculture - LDR Light Classification");
-    Serial.println("ADC_Value,Light_Level");
+    pinMode(WATER_LEVEL_PIN, INPUT);
+
+    Serial.println("Water Level Sensor Experiment 1 - Dry Sensor");
+    Serial.println("ADC_Value");
 }
 
 void loop()
 {
-    int ldrValue = analogRead(LDR_PIN);
+    int waterLevelValue = analogRead(WATER_LEVEL_PIN);
 
-    const char* lightLevel;
+    Serial.println(waterLevelValue);
 
-    if (ldrValue <= 100)
-    {
-        lightLevel = "DARK";
-    }
-    else if (ldrValue <= 1000)
-    {
-        lightLevel = "DIM";
-    }
-    else if (ldrValue <= 3500)
-    {
-        lightLevel = "NORMAL";
-    }
-    else
-    {
-        lightLevel = "BRIGHT";
-    }
-
-    Serial.print(ldrValue);
-    Serial.print(",");
-    Serial.println(lightLevel);
-
-    delay(1000);
+    delay(500);
 }
