@@ -1293,3 +1293,57 @@ The results from this experiment will be used as the basis for:
 The ADC measurements were compared across the different water-level conditions to visualize how the sensor output changes with increasing water level.
 
 ![Water Level Sensor Experiment 2 - ADC vs Water Level](images/water_level_experiment2_adc_vs_water_level.png)
+
+
+### Experiment 3 — Stable Medium Water Level
+
+#### Objective
+
+The third water-level experiment investigated the short-term stability of the water-level sensor when the sensor was maintained at a fixed medium water level.
+
+#### Experimental Procedure
+
+The water-level sensor was placed at a fixed medium water level and kept undisturbed while ADC measurements were collected.
+
+A total of **300 ADC measurements** were recorded at approximately 1-second intervals.
+
+The complete dataset is stored in:
+
+`data/water_level/experiment3_stable.csv`
+
+#### Statistical Results
+
+| Parameter | Result |
+|---|---:|
+| Number of readings | 300 |
+| Minimum ADC value | 1535 |
+| Maximum ADC value | 1636 |
+| Average ADC value | 1595.77 |
+| Median ADC value | 1596 |
+| ADC range | 101 |
+| Standard deviation | 7.79 |
+| Coefficient of variation | 0.49% |
+
+#### Observations
+
+During the stable medium-water-level experiment, the water-level sensor produced ADC values between **1535 and 1636**, with an average ADC value of **1595.77**.
+
+The median ADC value was **1596**, which is very close to the average value. This indicates that the readings were concentrated around approximately 1596 ADC counts.
+
+The total ADC range was **101 counts**. The standard deviation was **7.79 ADC counts**, while the coefficient of variation was only **0.49%**.
+
+The relatively low coefficient of variation indicates that the sensor produced a highly stable ADC output while the water level remained constant.
+
+#### Engineering Interpretation
+
+The experiment demonstrates that the water-level sensor and ESP32 ADC can provide stable measurements when the sensor position and water level remain unchanged.
+
+The stability observed in this experiment is important for the later water-level classification stage. A stable ADC value at a fixed water level reduces the possibility of unnecessary changes between water-level categories caused by small measurement fluctuations.
+
+However, this experiment only evaluates stability at the tested medium water level. It does not establish the final thresholds for EMPTY, LOW, MEDIUM, HIGH, and FULL conditions. Those thresholds will be determined and validated in the following experiments.
+
+#### Graph
+
+The ADC readings were plotted against measurement time to visualize the stability of the water-level sensor output.
+
+![Water Level Experiment 3 - ADC vs Time](images/water_level_experiment3_adc_vs_time.png)

@@ -8,17 +8,15 @@ void setup()
 
     delay(1000);
 
-    pinMode(WATER_LEVEL_PIN, INPUT);
-
-    Serial.println("Water Level Sensor Experiment 1 - Dry Sensor");
+    Serial.println("Water Level Experiment 3 - Stable Medium Water Level");
     Serial.println("ADC_Value");
 }
 
 void loop()
 {
-    int waterLevelValue = analogRead(WATER_LEVEL_PIN);
+    int waterLevel = analogRead(WATER_LEVEL_PIN);
 
-    Serial.println(waterLevelValue);
+    Serial.println(waterLevel);
 
-    delay(500);
+    delay(1000);
 }
