@@ -1347,3 +1347,243 @@ However, this experiment only evaluates stability at the tested medium water lev
 The ADC readings were plotted against measurement time to visualize the stability of the water-level sensor output.
 
 ![Water Level Experiment 3 - ADC vs Time](images/water_level_experiment3_adc_vs_time.png)
+
+
+### Experiment 4 — Threshold Determination & Boundary Validation
+
+#### Objective
+
+The fourth experiment was conducted to determine suitable ADC thresholds for classifying the water level into five categories:
+
+- EMPTY
+- LOW
+- MEDIUM
+- HIGH
+- FULL
+
+The thresholds were first investigated using measurements collected at different water levels. Boundary validation was then performed by gradually adding and removing water to determine whether the classification changed correctly and remained stable.
+
+#### Threshold Classification
+
+The current classification uses the following approximate ADC regions:
+
+| Water Level | ADC Range / Classification |
+|---|---:|
+| EMPTY | Lowest ADC region |
+| LOW | Low ADC region |
+| MEDIUM | Intermediate ADC region |
+| HIGH | High ADC region |
+| FULL | Highest ADC region |
+
+The exact thresholds were evaluated using the experimental measurements rather than assuming that the ADC scale directly represents a physical water-volume measurement.
+
+---
+
+### Gradual Water Addition
+
+#### Objective
+
+A gradual water-filling test was performed to determine whether the water-level classification changed correctly as the water level was progressively increased.
+
+The experiment was used to verify the transition between the five water-level categories:
+
+EMPTY → LOW → MEDIUM → HIGH → FULL
+
+#### Procedure
+
+The container was initially empty and the water-level sensor was positioned at the measurement location.
+
+Water was then gradually added while ADC measurements were continuously recorded.
+
+A total of **38** ADC readings were collected during the gradual water-filling sequence.
+
+The complete dataset is stored in:
+
+`data/water_level/experiment4_gradual_filling.csv`
+
+#### Statistical Summary
+
+| Water Level | Number of Readings | Minimum ADC | Maximum ADC | Average ADC |
+| ----------- | -----------------: | ----------: | ----------: | ----------: |
+| EMPTY       |                  6 |         421 |         489 |      453.17 |
+| LOW         |                  4 |         511 |        1250 |      760.75 |
+| MEDIUM      |                  7 |        1630 |        1982 |     1872.14 |
+| HIGH        |                  7 |        2014 |        2076 |     2053.86 |
+| FULL        |                 14 |        2095 |        2128 |     2110.79 |
+| **Total**   |             **38** |     **421** |    **2128** |           — |
+
+#### Observed Transition Points
+
+During gradual water filling, the classification changed in the following order:
+
+**EMPTY → LOW → MEDIUM → HIGH → FULL**
+
+The observed transition regions were approximately:
+
+- EMPTY → LOW: around 489–511 ADC
+- LOW → MEDIUM: around 1250–1630 ADC
+- MEDIUM → HIGH: around 1982–2014 ADC
+- HIGH → FULL: around 2076–2095 ADC
+
+These transitions demonstrate that the classifier responds progressively as the water level increases.
+
+#### Classification Errors
+
+No obvious classification errors were observed during the actual gradual water-filling sequence.
+
+The readings followed the expected increasing sequence:
+
+**EMPTY → LOW → MEDIUM → HIGH → FULL**
+
+One additional reading of 2043 ADC, classified as HIGH, was recorded after the FULL readings. However, this reading was caused by accidentally lifting the sensor out of its previous position during the experiment. Therefore, it was treated as a physical disturbance rather than a classification error and was not considered part of the gradual filling sequence.
+
+#### Classification Stability
+
+The classification remained stable during the gradual water-filling process.
+
+The observed sequence was:
+
+**EMPTY → LOW → MEDIUM → HIGH → FULL**
+
+No unexpected reversals such as:
+
+`LOW → EMPTY`
+
+or
+
+`MEDIUM → LOW`
+
+were observed during the controlled water addition.
+
+This indicates that the classification system responds consistently when the water level is gradually increased.
+
+#### Threshold Decision
+
+The gradual water-filling experiment provides good initial validation of the current threshold ranges.
+
+The observed category boundaries were clearly separated:
+
+- EMPTY readings ended at 489 ADC
+- LOW readings started at 511 ADC
+- MEDIUM readings started at 1630 ADC
+- HIGH readings started at 2014 ADC
+- FULL readings started at 2095 ADC
+
+The filling experiment alone does not indicate that the thresholds need to be changed.
+
+However, the HIGH → FULL boundary should be considered carefully because the observed values are relatively close: 2076 ADC (HIGH) and 2095 ADC (FULL).
+
+Therefore, the filling results should be evaluated together with the gradual water-removal experiment and boundary-validation data before permanently finalizing the thresholds.
+
+
+#### Graph — Gradual Water Adding
+
+The ADC measurements were plotted against measurement number to visualize how the sensor output changed as water was gradually added.
+
+![Water Level Experiment 4 - Gradual Water Filling ADC vs Time](images/water_level_experiment4_gradual_filling_adc_vs_time.png)
+
+#### Engineering Interpretation
+
+The gradual water-filling experiment demonstrated that the selected ADC thresholds can distinguish the five tested water-level categories.
+
+The classification changed in the expected direction as water was added:
+
+EMPTY → LOW → MEDIUM → HIGH → FULL
+
+No obvious incorrect classification was observed during the gradual filling process.
+
+---
+
+### Gradual Water Removal
+
+#### Objective
+
+A gradual water-removal test was performed to determine whether the classification remained stable when the water level was progressively decreased.
+
+#### Procedure
+
+The container was initially filled and the sensor was positioned at the measurement location.
+
+Water was then gradually removed while ADC measurements were continuously recorded.
+
+A total of **74 ADC readings** were collected.
+
+The complete dataset is stored in:
+
+`data/water_level/experiment4_gradual_removal.csv`
+
+#### Statistical Summary
+
+| Water Level | Number of Readings | Minimum ADC | Maximum ADC | Average ADC |
+|---|---:|---:|---:|---:|
+| FULL | 33 | 2079 | 2219 | 2168.18 |
+| HIGH | 3 | 2042 | 2079 | 2061.67 |
+| MEDIUM | 12 | 1504 | 1999 | 1819.92 |
+| LOW | 12 | 771 | 1471 | 1152.25 |
+| EMPTY | 14 | 0 | 475 | 103.50 |
+| **Total** | **74** | **0** | **2219** | — |
+
+#### Observed Transition Points
+
+During gradual water removal, the classification changed in the following order:
+
+**FULL → HIGH → MEDIUM → LOW → EMPTY**
+
+The observed transition regions were approximately:
+
+- FULL → HIGH: around 2079 ADC
+- HIGH → MEDIUM: around 2042 ADC
+- MEDIUM → LOW: around 1471–1504 ADC
+- LOW → EMPTY: around 454–475 ADC
+
+These transitions demonstrate that the classifier responds progressively to decreasing water level.
+
+#### Classification Errors
+
+No obvious classification errors were observed during the gradual water-removal experiment.
+
+The readings followed the expected decreasing sequence without unexpected transitions to higher water-level categories.
+
+For example, no transitions such as:
+
+`LOW → HIGH`
+
+or
+
+`MEDIUM → FULL`
+
+were observed.
+
+#### Classification Stability
+
+The classification remained stable during gradual water removal.
+
+The observed sequence was:
+
+**FULL → HIGH → MEDIUM → LOW → EMPTY**
+
+This indicates that the current classification approach responds correctly when the water level decreases gradually.
+
+#### Threshold Decision
+
+Based on the gradual addition and removal experiments, the current thresholds do not need to be changed at this stage.
+
+The experiments demonstrate that the thresholds provide a practical separation between the five tested water-level categories.
+
+Further testing can still be performed under different container conditions, sensor positions, and repeated water-level changes before considering the thresholds permanently finalized.
+
+#### Graph — Gradual Water Removal
+
+The ADC measurements were plotted against measurement number to visualize how the sensor output changed as water was gradually removed.
+
+![Water Level Experiment 4 - Gradual Water Removal ADC vs Time](images/water_level_experiment4_gradual_removal_adc_vs_time.png)
+
+#### Engineering Interpretation
+
+The gradual water-removal experiment provides important validation of the water-level classification system.
+
+The ADC value decreased as the water level was reduced, and the classification changed in the expected order from FULL to EMPTY.
+
+The absence of obvious classification reversals indicates that the thresholds are suitable for the current experimental setup.
+
+---
