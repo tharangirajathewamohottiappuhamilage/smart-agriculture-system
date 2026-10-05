@@ -1587,3 +1587,147 @@ The ADC value decreased as the water level was reduced, and the classification c
 The absence of obvious classification reversals indicates that the thresholds are suitable for the current experimental setup.
 
 ---
+
+### Experiment 5 — Repeated Water-Level Classification & Reliability
+
+#### Objective
+
+The objective of Experiment 5 was to evaluate the repeatability and reliability of the water-level classification system.
+
+The sensor was tested repeatedly at five fixed water-level conditions:
+
+**EMPTY → LOW → MEDIUM → HIGH → FULL**
+
+Fifty ADC measurements were collected for each water-level condition. The purpose was to determine whether the same physical water level consistently produced the same classification and whether significant ADC fluctuations caused unexpected classification changes.
+
+#### Experimental Procedure
+
+The water container was tested at five different water-level conditions: EMPTY, LOW, MEDIUM, HIGH, and FULL.
+
+At each water level, the sensor was positioned at the selected measurement location and the water level was kept as constant as possible.
+
+A total of **50 ADC readings** were collected for each water-level condition, resulting in a total of **250 ADC readings**.
+
+The complete dataset is stored in:
+
+`data/water_level/experiment5_repeated_classification.csv`
+
+The measurements were recorded in the following order:
+
+**EMPTY → LOW → MEDIUM → HIGH → FULL**
+
+#### Statistical Summary
+
+| Water Level | Number of Readings | Minimum ADC | Maximum ADC | Average ADC | Range | Standard Deviation |
+| ----------- | -----------------: | ----------: | ----------: | ----------: | ----: | -----------------: |
+| EMPTY       |                 50 |           0 |           0 |        0.00 |     0 |               0.00 |
+| LOW         |                 50 |        1047 |        1156 |     1115.50 |   109 |              21.67 |
+| MEDIUM      |                 50 |        1781 |        1905 |     1850.68 |   124 |              37.50 |
+| HIGH        |                 50 |        2000 |        2064 |     2015.04 |    64 |              12.47 |
+| FULL        |                 50 |        2087 |        2219 |     2172.98 |   132 |              40.89 |
+| **Total**   |            **250** |       **0** |    **2219** |           — |     — |                  — |
+
+#### Observations
+
+The EMPTY condition produced a constant ADC value of **0** for all 50 measurements, indicating very stable sensor output when the sensor was not detecting water.
+
+The LOW condition produced ADC values between **1047 and 1156**, with an average of **1115.50**. The relatively small variation indicates stable measurements at the selected LOW water level.
+
+The MEDIUM condition produced ADC values between **1781 and 1905**, with an average of **1850.68**. The ADC values gradually varied within the expected MEDIUM range but remained consistently classified as MEDIUM.
+
+The HIGH condition produced ADC values between **2000 and 2064**, with an average of **2015.04**. All measurements remained within the HIGH classification.
+
+The FULL condition produced ADC values between **2087 and 2219**, with an average of **2172.98**. Although the FULL condition showed more variation than the HIGH condition, all measurements remained within the FULL classification.
+
+#### Classification Accuracy
+
+All 250 measurements were assigned to the expected water-level category.
+
+| Water Level | Correct Classifications | Classification Errors | Accuracy |
+| ----------- | ----------------------: | --------------------: | -------: |
+| EMPTY       |                      50 |                     0 |     100% |
+| LOW         |                      50 |                     0 |     100% |
+| MEDIUM      |                      50 |                     0 |     100% |
+| HIGH        |                      50 |                     0 |     100% |
+| FULL        |                      50 |                     0 |     100% |
+| **Overall** |                 **250** |                 **0** | **100%** |
+
+No classification errors were observed in this experiment.
+
+#### Classification Stability
+
+The classification remained stable throughout all five repeated measurement conditions.
+
+The observed classifications followed the expected sequence:
+
+**EMPTY → LOW → MEDIUM → HIGH → FULL**
+
+No unexpected classification changes were observed within any fixed water-level condition.
+
+For example, the HIGH measurements remained classified as HIGH even though their ADC values varied between **2000 and 2064**. Similarly, all FULL measurements remained classified as FULL despite ADC values ranging from **2087 to 2219**.
+
+This indicates that the classification thresholds provide sufficient separation for the tested fixed water-level conditions.
+
+#### Graph — ADC Stability
+
+The ADC measurements were plotted against measurement number to visualize the stability and variation of the sensor output at each fixed water level.
+
+![Water Level Experiment 5 - ADC Stability](images/water_level_experiment5_adc_stability.png)
+
+#### Graph — Classification Stability
+
+The classification result was plotted against measurement number to verify whether the classifier remained stable during repeated measurements.
+
+![Water Level Experiment 5 - Classification Stability](images/water_level_experiment5_classification.png)
+
+#### Threshold Evaluation
+
+The results further support the practical threshold ranges established during the previous experiments.
+
+The observed ADC ranges were:
+
+* EMPTY: **0**
+* LOW: **1047–1156**
+* MEDIUM: **1781–1905**
+* HIGH: **2000–2064**
+* FULL: **2087–2219**
+
+There was no overlap between the measured ADC ranges of the five fixed water-level conditions.
+
+The closest boundary was between HIGH and FULL:
+
+**HIGH maximum = 2064 ADC**
+
+**FULL minimum = 2087 ADC**
+
+This provides a separation of **23 ADC units** in the repeated fixed-level experiment.
+
+The results therefore do not indicate a need to change the current thresholds at this stage.
+
+#### Engineering Interpretation
+
+Experiment 5 demonstrates that the water-level sensor and classification system provide repeatable results under fixed water-level conditions.
+
+All 250 measurements were correctly classified, resulting in an observed classification accuracy of **100%**.
+
+The ADC values showed some variation within the LOW, MEDIUM, HIGH, and FULL conditions, which is expected from an analog conductivity-based sensor. However, these variations did not cause any classification errors.
+
+The results confirm that the current classification approach is sufficiently stable for the present experimental setup.
+
+Together with the gradual water-filling and water-removal experiments, this experiment provides evidence that the five-level classification system can distinguish the tested water-level conditions reliably.
+
+#### Experiment 5 Conclusion
+
+The repeated classification experiment was successfully completed.
+
+The main findings were:
+
+* **250 total ADC readings** were collected.
+* **50 readings** were collected for each water-level condition.
+* All five water-level categories remained correctly classified.
+* **0 classification errors** were observed.
+* Overall observed classification accuracy was **100%**.
+* The ADC ranges for the five tested conditions did not overlap.
+* The current thresholds are suitable for the present experimental setup.
+
+The water-level sensor can therefore proceed to the next stage of development, where the classified water-level information can be integrated into the complete Smart Agriculture monitoring and irrigation system.
