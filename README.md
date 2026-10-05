@@ -1719,7 +1719,7 @@ Together with the gradual water-filling and water-removal experiments, this expe
 #### Experiment 5 Conclusion
 
 The repeated classification experiment was successfully completed.
-
+README
 The main findings were:
 
 * **250 total ADC readings** were collected.
@@ -1731,3 +1731,243 @@ The main findings were:
 * The current thresholds are suitable for the present experimental setup.
 
 The water-level sensor can therefore proceed to the next stage of development, where the classified water-level information can be integrated into the complete Smart Agriculture monitoring and irrigation system.
+
+
+### Experiment 6 — ESP32 Water-Level Classification Integration
+
+#### Objective
+
+The objective of Experiment 6 was to validate the final water-level classification algorithm directly on the ESP32.
+
+The raw analog output from the water-level sensor connected to **GPIO33** was converted into five water-level categories:
+
+**EMPTY → LOW → MEDIUM → HIGH → FULL**
+
+This experiment was performed after the sensor characterization, threshold determination, gradual filling and removal tests, and repeated classification experiment.
+
+The purpose was to verify that the final classification logic operated correctly on the actual ESP32 hardware using the experimentally determined ADC thresholds.
+
+#### Procedure
+
+The water-level sensor was connected to the ESP32 with the signal output connected to **GPIO33**.
+
+The ESP32 continuously read the analog sensor output using `analogRead()` and passed each ADC value to the water-level classification function.
+
+The final threshold implementation used in the experiment was:
+
+```cpp
+if (adcValue < 500)
+{
+    return "EMPTY";
+}
+else if (adcValue < 1600)
+{
+    return "LOW";
+}
+else if (adcValue < 2000)
+{
+    return "MEDIUM";
+}
+else if (adcValue < 2084)
+{
+    return "HIGH";
+}
+else
+{
+    return "FULL";
+}
+```
+
+The ESP32 transmitted the results through the Serial Monitor in the following format:
+
+```text
+ADC_Value,Classification
+```
+
+A total of **100 ADC readings** were collected.
+
+The measurements were tested across the five water-level conditions.
+
+#### Final Thresholds
+
+Based on the previous water-level experiments, the following thresholds were implemented:
+
+| Water Level |   ADC Range |
+| ----------- | ----------: |
+| EMPTY       |     `< 500` |
+| LOW         |  `500–1599` |
+| MEDIUM      | `1600–1999` |
+| HIGH        | `2000–2083` |
+| FULL        |    `≥ 2084` |
+
+These thresholds were selected based on the observed separation between the water-level categories during the gradual filling, gradual removal, boundary-validation, and repeated-classification experiments.
+
+#### Statistical Summary
+
+The 100 ESP32 measurements produced the following results:
+
+| Classification | Number of Readings | Minimum ADC | Maximum ADC | Average ADC |
+| -------------- | -----------------: | ----------: | ----------: | ----------: |
+| EMPTY          |                 20 |           0 |           0 |        0.00 |
+| LOW            |                 20 |        1035 |        1591 |     1184.60 |
+| MEDIUM         |                 20 |        1623 |        1997 |     1834.25 |
+| HIGH           |                 19 |        2003 |        2082 |     2048.58 |
+| FULL           |                 21 |        2086 |        2193 |     2162.57 |
+| **Total**      |            **100** |       **0** |    **2193** |           — |
+
+The measured ADC values generally followed the expected increase as the water level increased.
+
+#### Classification Results
+
+The ESP32 successfully converted the ADC measurements into the programmed water-level categories.
+
+The observed distribution was:
+
+* **20 EMPTY**
+* **20 LOW**
+* **20 MEDIUM**
+* **19 HIGH**
+* **21 FULL**
+
+The total number of classifications was **100**.
+
+The classification boundaries were correctly applied by the ESP32. For example:
+
+```text
+1591 → LOW
+1623 → MEDIUM
+1997 → MEDIUM
+2003 → HIGH
+2082 → HIGH
+2086 → FULL
+```
+
+This confirms that the implemented classification function correctly applies the programmed ADC thresholds.
+
+However, the HIGH/FULL boundary requires particular attention. One reading of **2090 ADC** occurred during the HIGH-level measurement sequence and was classified as FULL because the implemented threshold defines values of **2084 ADC or higher as FULL**.
+
+Therefore, this experiment should not be described as having 100% physical classification accuracy. Instead, it demonstrates that the **ESP32 software correctly applies the defined threshold logic**, while also revealing that the HIGH/FULL boundary is close to the measured sensor output.
+
+#### Boundary Observations
+
+The most important boundary observed during the experiment was the transition between HIGH and FULL.
+
+The highest HIGH reading was:
+
+**2082 ADC**
+
+The lowest FULL reading was:
+
+**2086 ADC**
+
+The difference between these values was only:
+
+**4 ADC units**
+
+The final threshold was set at:
+
+**2084 ADC**
+
+Therefore:
+
+```text
+2082 → HIGH
+2083 → HIGH
+2084 → FULL
+2086 → FULL
+```
+
+The experiment also produced a **2090 ADC** reading during the HIGH measurement sequence. Because 2090 is greater than or equal to 2084, the ESP32 correctly classified it as FULL according to the programmed threshold.
+
+This indicates that the HIGH/FULL boundary is relatively narrow and may be sensitive to small variations in sensor position, water movement, or conductivity.
+
+The other boundaries showed larger separation in this experiment:
+
+* LOW → MEDIUM boundary: **1600 ADC**
+* MEDIUM → HIGH boundary: **2000 ADC**
+* HIGH → FULL boundary: **2084 ADC**
+
+#### Classification Consistency
+
+The EMPTY, LOW, and MEDIUM measurements showed clear separation from the neighbouring categories.
+
+The observed ranges were:
+
+```text
+EMPTY:  0–0
+LOW:    1035–1591
+MEDIUM: 1623–1997
+HIGH:   2003–2082
+FULL:   2086–2193
+```
+
+There were clear gaps between the observed ranges:
+
+* LOW maximum = **1591**
+* MEDIUM minimum = **1623**
+
+and:
+
+* MEDIUM maximum = **1997**
+* HIGH minimum = **2003**
+
+The HIGH/FULL separation was much smaller:
+
+* HIGH maximum = **2082**
+* FULL minimum = **2086**
+
+This confirms that the classification system is generally stable, but the HIGH/FULL boundary is the most sensitive part of the current classification system.
+
+#### Graph — ESP32 Classification
+
+The ADC measurements collected directly from the ESP32 were plotted against measurement number to visualize the implemented classification behaviour.
+
+![Water Level Experiment 6 - ESP32 Classification](images/water_level_experiment6_classification.png)
+
+The graph shows the progression of ADC values through the five classification regions and highlights the narrow separation between the HIGH and FULL categories.
+
+#### Engineering Interpretation
+
+Experiment 6 validates the implementation of the water-level classification algorithm on the actual ESP32 hardware.
+
+The sensor was successfully read through **GPIO33**, and the raw ADC values were converted into the five defined water-level categories.
+
+The measurements showed clear separation between EMPTY, LOW, MEDIUM, and HIGH conditions. The LOW, MEDIUM, and HIGH measurements remained within their expected ADC ranges, while the FULL measurements produced substantially higher ADC values.
+
+The main engineering concern identified during this experiment is the **HIGH/FULL boundary**. The highest HIGH reading was 2082 ADC and the lowest FULL reading was 2086 ADC, leaving only a 4-ADC-unit separation. One reading of 2090 ADC during the HIGH measurement sequence crossed the programmed FULL threshold.
+
+This does not indicate a software error. The ESP32 correctly applied the defined rule:
+
+```text
+ADC ≥ 2084 → FULL
+```
+
+Instead, it demonstrates that the sensor output near the HIGH/FULL boundary can vary enough to cross the threshold.
+
+For the current prototype, the threshold of **2084 ADC** can be retained because it lies between the observed HIGH and FULL ranges. However, further testing may be useful if the water-level sensor will be used for automatic irrigation decisions where occasional HIGH/FULL changes could affect system behaviour.
+
+#### Conclusion
+
+Experiment 6 successfully validated the ESP32 implementation of the water-level classification system.
+
+A total of **100 ADC readings** were collected and processed directly by the ESP32.
+
+The implemented thresholds were:
+
+```text
+EMPTY  < 500
+LOW    500–1599
+MEDIUM 1600–1999
+HIGH   2000–2083
+FULL   ≥ 2084
+```
+
+The ESP32 correctly applied these threshold rules to the measured ADC values.
+
+The experiment confirmed clear separation between the EMPTY, LOW, MEDIUM, and HIGH conditions. The main limitation identified was the narrow separation between HIGH and FULL, with a 4-ADC-unit difference between the highest HIGH reading and the lowest FULL reading.
+
+The current threshold configuration is therefore suitable for the present prototype, but the HIGH/FULL boundary should be monitored during later system integration.
+
+With the completion of Experiment 6, the water-level sensor has progressed from basic sensor characterization through threshold determination, stability testing, repeated classification, and finally **real-time ESP32 classification**.
+
+The next stage can focus on integrating the water-level classification with the **Smart Agriculture irrigation-control logic**.

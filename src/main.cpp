@@ -1,22 +1,23 @@
+
 #include <Arduino.h>
 
 #define WATER_LEVEL_PIN 33
 
 String classifyWaterLevel(int adcValue)
 {
-    if (adcValue <= 500)
+    if (adcValue < 500)
     {
         return "EMPTY";
     }
-    else if (adcValue <= 1500)
+    else if (adcValue < 1600)
     {
         return "LOW";
     }
-    else if (adcValue <= 1999)
+    else if (adcValue < 2000)
     {
         return "MEDIUM";
     }
-    else if (adcValue <= 2080)
+    else if (adcValue < 2084)
     {
         return "HIGH";
     }
@@ -32,7 +33,7 @@ void setup()
 
     delay(1000);
 
-    Serial.println("Water Level Experiment 4 - Threshold Determination");
+    Serial.println("Water Level Experiment 6 - ESP32 Classification");
     Serial.println("ADC_Value,Classification");
 }
 
@@ -48,3 +49,4 @@ void loop()
 
     delay(1000);
 }
+
